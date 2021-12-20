@@ -6,11 +6,15 @@ console.log('Width : ' + wWidth)
 
 /*
 drawBackground function : draws background images to cover screen
+accepts the src, size of the row, and size of the column as arguments
 */
 
 function drawBackground(src,rowSize, columnSize){
-    
+    // the first for loop wraps the second to control the drawing from top to bottom
+    //the assumption is that each tile is 100px
     for(let c = 0; c < columnSize ; c++){
+        //the second for loop controls the drawing from left to right
+        //the assumption is that each tile is 100px
         for(let i = 0; i < rowSize ; i++){
             let tile = document.createElement('img')
             newImage(src, (i*100).toString() + 'px', (c*100).toString() + 'px', tile)

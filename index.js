@@ -1,31 +1,39 @@
 
 let wHeight = window.innerHeight;
 let wWidth = window.innerWidth;
-let inventory = document.createElement('div')
+
 // console.log('Height : ' + wHeight)
 // console.log('Width : ' + wWidth)
 
 /*
 makeInventory function : creates inventory div,  
 */
-
-function makeInventory(){
+let inventory = document.createElement('div')
+function Inventory(){
     
-    inventory.style.position = 'fixed'
-    inventory.style.left = '0px'
-    inventory.style.bottom = '0px'
-    inventory.style.width = '100%'
-    inventory.style.height = '100px'
-    inventory.style.display = 'flex'
-    inventory.style.flexDirection = 'row'
-    inventory.style.alignItems = 'center'
-    inventory.style.justifyContent = 'space-evenly'
-    inventory.style.border = '2px solid black'
-    inventory.style.backgroundColor = 'brown'
-    document.body.append(inventory)
-    console.log('Inventory generated')
+    function makeInventoryDiv(){
+        move(inventory).to(0,0)
+        inventory.style.width = '100%'
+        inventory.style.height = '100px'
+        inventory.style.display = 'flex'
+        inventory.style.flexDirection = 'row'
+        inventory.style.alignItems = 'center'
+        inventory.style.justifyContent = 'space-evenly'
+        inventory.style.border = '2px solid black'
+        inventory.style.backgroundColor = 'blue'
+        document.body.append(inventory)
+        console.log('Inventory generated')
+    }
+    function addToInventory(element){
+        inventory.append(element)
+        console.log('Item added to inventory')
+    }
+    
+    return {
+        generate : makeInventoryDiv,
+        add : addToInventory
+    }
 }
-
 
 
 
@@ -42,7 +50,7 @@ function drawBackground(src,rowSize, columnSize){
         //the assumption is that each tile is 100px
         for(let i = 0; i < rowSize ; i++){
             let tile = document.createElement('img')
-            newImage(src, (i*100).toString() + 'px', (c*100).toString() + 'px', tile)
+            newImage(src, (i*100), (c*100), tile)
         }
     }
     
@@ -62,10 +70,12 @@ function newImage(src, posLeft, posBot, img){
     }
     newImg.src = src
     newImg.style.position = 'fixed'
-    newImg.style.left = posLeft
-    newImg.style.bottom = posBot
+    newImg.style.left = posLeft + 'px'
+    newImg.style.bottom = posBot + 'px'
     document.body.append(newImg)
     console.log('NewImage ran : new image generated.')
+
+    return newImg
 }
 
 /*
@@ -76,17 +86,36 @@ Identical to newImage, but adds eventListener
 function newItem(src, posLeft, posBot){
     // create local variable named item
     let item = document.createElement('img')
+    
     //passes item as an argument to newImage, newImage will now use item instead of generating its own variable
     newImage(src, posLeft, posBot, item)
-    item.addEventListener('dblclick', addToInventory)
-    console.log('NewItem ran : new item generated')
-    function addToInventory(){
+    
+    item.addEventListener('dblclick', function(){
+        // Inventory().add(item)
         item.remove()
         let inventoryItem = document.createElement('img')
         inventoryItem.src = src
         inventory.append(inventoryItem)
-    }    
+       console.log('Item added to inventory')
+    })
+    console.log('NewItem ran : new item generated')
+    
+    return item    
 }
+
+//Move function - draws image, positions it
+function move(element){
+    element.style.position = 'fixed'
+
+    function moveToCoordinates(posLeft, posBot){
+        element.style.left = posLeft + 'px'
+        element.style.bottom = posBot + 'px'
+} //end moveToCoordinates function
+    return {
+        to : moveToCoordinates
+    }
+    }//end move function
+    
 
 
 //draw the sky first
@@ -95,18 +124,20 @@ drawBackground('assets/sky.png', 100, 15)
 drawBackground('assets/grass.png', 100, 5)
 
 //draw rest of the images over it
-//using NewImage to create character sprite
-newImage('assets/green-character.gif', '100px', '100px')
-//using NewImage to create pine tree sprite
-newImage('assets/pine-tree.png', '450px', '200px')
-//using NewImage to create.. so on and so forth
-newImage('assets/tree.png', '200px', '300px')
-newImage('assets/pillar.png', '350px', '100px')
-newImage('assets/crate.png','150px','200px')
-newImage('assets/well.png','500px', '425px')
+//using move to draw images
+let character = move(newImage('assets/green-character.gif')).to(100, 100)
+let pineTree = move(newImage('assets/pine-tree.png')).to(450,200)
+let tree = move(newImage('assets/tree.png')).to(200, 300)
+let pillar = move(newImage('assets/pillar.png')).to(350, 100)
+let crate = move(newImage('assets/crate.png')).to(150, 200)
+let well = move(newImage('assets/well.png')).to(500, 425)
+
 //NewItem block
-newItem('assets/sword.png', '500px', '405px')
-newItem('assets/sheild.png','165px', '185px')
-newItem('assets/staff.png','600px', '100px')
-makeInventory()
+let sword = move(newItem('assets/sword.png')).to(500, 405)
+// let sword = newItem('assets/sword.png', '500px', '405px')
+let sheild = move(newItem('assets/sheild.png')).to(165, 185)
+// let sheild = newItem('assets/sheild.png','165px', '185px')
+let staff = move(newItem('assets/staff.png')).to(500, 100)
+// let staff = newItem('assets/staff.png','600px', '100px')
+Inventory().generate()
 
